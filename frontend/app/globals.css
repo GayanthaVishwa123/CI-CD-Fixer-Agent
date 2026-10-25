@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+body {
+  @apply min-h-screen text-slate-100;
+}
+
+@layer base {
+  html,
+  body {
+    background-color: #000E24 !important;
+    color: #f8fafc;
+    font-family: "Alatsi", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+  }
+
+  *,
+  *::before,
+  *::after {
+    font-family: inherit;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.015em;
+  }
+
+  p,
+  li,
+  label,
+  button,
+  input,
+  textarea,
+  select {
+    line-height: 1.5;
+  }
+}
