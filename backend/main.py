@@ -88,21 +88,43 @@ def _fetch_workflows(repo: str, token: str | None) -> dict[str, str]:
     if response.status_code == 404:
         raise ValueError("repository has no .github/workflows directory")
     response.raise_for_status()
+    payload = response.json()
+    if not isinstance(payload, list):
+        raise ValueError("GitHub workflows response was not a directory listing")
+
     files: dict[str, str] = {}
-    for item in response.json():
+    for item in payload:
+        if not isinstance(item, dict):
+            continue
         if (
             item.get("type") != "file"
             or Path(item.get("path", "")).suffix.lower() not in {".yml", ".yaml"}
         ):
             continue
+        file_url = item.get("url")
+        file_path = item.get("path")
+        if not isinstance(file_url, str) or not isinstance(file_path, str):
+            raise ValueError("GitHub workflow entry is missing path or URL")
         file_response = requests.get(
-            item["url"], headers=_github_headers(token), timeout=20
+            file_url, headers=_github_headers(token), timeout=20
         )
         file_response.raise_for_status()
-        content = base64.b64decode(file_response.json()["content"]).decode(
-            "utf-8", errors="replace"
+        file_payload = file_response.json()
+        encoded_content = (
+            file_payload.get("content")
+            if isinstance(file_payload, dict)
+            else None
         )
-        files[item["path"]] = content[:100_000]
+        if not isinstance(encoded_content, str):
+            raise ValueError(f"GitHub workflow response is missing content: {file_path}")
+        try:
+            normalized_content = "".join(encoded_content.split())
+            content = base64.b64decode(normalized_content, validate=True).decode(
+                "utf-8", errors="replace"
+            )
+        except (ValueError, UnicodeError) as exc:
+            raise ValueError(f"GitHub workflow content is invalid: {file_path}") from exc
+        files[file_path] = content[:100_000]
     if not files:
         raise ValueError("no workflow files were found")
     return files
