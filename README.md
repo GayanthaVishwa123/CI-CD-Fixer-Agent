@@ -19,14 +19,20 @@ before they break a pipeline. The application combines deterministic
 ## Project structure
 
 - `frontend/`: Next.js App Router, TypeScript, Tailwind CSS, and Alatsi font
-- `backend/`: FastAPI, Pydantic, LLM integrations, PyGithub, and actionlint
-  integration
-- `frontend/components/SuccessCard.tsx`: successful PR result and reset UI
+- `backend/`: FastAPI, Pydantic, LLM integrations, PyGithub, MCP tools, and
+  actionlint integration
+- `backend/test_main.py`: focused tests for repository parsing and GitHub
+  workflow retrieval
+- `frontend/components/`: analysis findings, code comparison, and pull request
+  success UI
+- `ISSUES.md`: tracked roadmap for Docker, Azure, authentication, scanners,
+  optimization analysis, testing, and streaming
 
 ## Prerequisites
 
 - Python 3.10 or newer
 - Node.js 18 or newer
+- npm
 - An API key for the selected LLM provider
 - A GitHub token with permission to read workflows, create branches, update
   repository contents, and create pull requests
@@ -72,6 +78,10 @@ source .venv/bin/activate
 pip install -r backend/requirements.txt
 uvicorn backend.main:app --reload --port 8000
 ```
+
+`backend/requirements.txt` includes runtime dependencies and the test tools
+`pytest`, `pytest-asyncio`, `pytest-mock`, and `httpx`. The file uses minimum
+version constraints and supports Python 3.10 or newer.
 
 The backend exposes:
 
@@ -149,6 +159,39 @@ or a full GitHub URL, then enter a token before creating a PR. Select
 remediate. The dashboard then hides the approval form and displays
 **SuccessCard** with a link to the generated pull request. Use **Audit Another
 Repo** to reset the dashboard.
+
+## Run tests
+
+Run the focused backend tests from the repository root:
+
+```bash
+.venv/bin/pytest -q backend/test_main.py
+```
+
+The tests do not call GitHub or an LLM. GitHub HTTP responses are mocked, and
+the suite covers repository URL validation, malformed workflow responses,
+Base64 content containing line breaks, and filtering of non-workflow files.
+
+To validate the frontend:
+
+```bash
+cd frontend
+npm run lint
+npm run build
+```
+
+The frontend lint currently reports a warning about loading Google Fonts from
+`app/layout.tsx`; it does not fail the lint command.
+
+## Current implementation status
+
+The current application provides raw configuration analysis, repository
+workflow analysis, deterministic `actionlint` integration, and
+approval-gated GitHub pull request creation. The broader architecture roadmap
+is tracked in [ISSUES.md](ISSUES.md). Docker orchestration, Azure Terraform
+deployment, GitHub App authentication, multi-CI scanners, cost optimization
+findings, and SSE streaming should be treated as planned work until their
+corresponding implementation is merged.
 
 ## Security
 
