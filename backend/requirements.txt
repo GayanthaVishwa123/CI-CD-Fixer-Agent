@@ -1,0 +1,18 @@
+# Runtime dependencies
+fastapi
+uvicorn[standard]
+pydantic
+google-genai
+openai
+anthropic
+requests
+PyGithub
+python-dotenv
+mcp>=2.0
+
+# Test dependencies
+pytest
+httpx
+
+# actionlint is an external CLI used for GitHub Actions checks.
+# Install it separately: https://github.com/rhysd/actionlint
