@@ -1,0 +1,39 @@
+# Environment Variables & Secrets (ඉතාම වැදගත්)
+.env
+*.env
+backend/.env
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.production.local
+
+# Python & Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Python Cache & Testing
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+.mypy_cache/
+
+# Node.js & Next.js Frontend
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# IDE & OS Specific Files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
